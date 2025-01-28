@@ -1,0 +1,7 @@
+[project]
+name = "kubernetes-intro"
+version = "0.1.0"
+description = "A project to explain the basics of Kubernetes"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
