@@ -4,6 +4,7 @@ from manim import (
     RIGHT,
     UP,
     GREY_A,
+    FadeIn,
     Rectangle,
     DoubleArrow,
     GrowFromCenter,
@@ -15,6 +16,14 @@ from manim import (
     TypeWithCursor,
 )
 from manim_slides.slide import Slide
+
+CURSOR = Rectangle(
+    color=GREY_A,
+    fill_color=GREY_A,
+    fill_opacity=1.0,
+    height=1,
+    width=0.2,
+)
 
 
 class ThreeLayerAppScene(Slide):
@@ -68,21 +77,59 @@ class ThreeLayerAppScene(Slide):
         question_text = Text(text="How do we deploy this?")
         question_text.scale(0.8).next_to(three_layer_app_group, UP, buff=1)
         cursor = (
-            Rectangle(
-                color=GREY_A,
-                fill_color=GREY_A,
-                fill_opacity=1.0,
-                height=1,
-                width=0.2,
-            )
-            .scale(0.8)
-            .move_to(question_text[0])
+            CURSOR.copy().scale(0.8).move_to(question_text[0])
         )  # Position the cursor
         self.add(question_text)
         self.play(TypeWithCursor(text=question_text, cursor=cursor))
         self.next_slide()
-        
+
 
 class EvolutionOfDeploymentSlide(Slide):
     def construct(self):
-        
+        header_text = Text(text="The Evolution Of Software Deployment")
+        header_text.to_edge(edge=UP)
+        cursor = CURSOR.copy().scale(0.8).move_to(header_text[0])  # Position the cursor
+        self.add(header_text)
+        self.play(
+            TypeWithCursor(
+                text=header_text,
+                cursor=cursor,
+                leave_cursor_on=False,
+                time_per_char=0.05,
+            )
+        )
+
+        self.next_slide()
+
+        icons_group = Group()
+
+        server_icon = SVGMobject(file_name="../assets/server-icon.svg")
+        server_text = Text(text="Bare-Metal").scale(0.5)
+        server_icon.add(server_text.next_to(server_icon, DOWN, buff=0.5))
+
+        vm_icon = SVGMobject(
+            file_name="../assets/virtual-machine-icon.svg",
+        )
+        vm_text = Text(text="Virtual Machines").scale(0.5)
+        vm_icon.add(vm_text.next_to(vm_icon, DOWN, buff=0.5))
+        vm_icon.scale_to_fit_height(server_icon.height)
+        vm_icon.next_to(server_icon, RIGHT, buff=2)
+
+        docker_icon = SVGMobject(
+            file_name="../assets/container-icon.svg",
+        )
+        docker_text = Text(text="Containers").scale(0.5)
+        docker_icon.add(docker_text.next_to(docker_icon, DOWN, buff=0.5))
+        docker_icon.scale_to_fit_height(server_icon.height)
+        docker_icon.next_to(vm_icon, RIGHT, buff=2)
+
+        icons_group.add(server_icon, vm_icon, docker_icon)
+        icons_group.center()
+
+        self.play(FadeIn(server_icon))
+
+        self.next_slide()
+        self.play(FadeIn(vm_icon))
+
+        self.next_slide()
+        self.play(FadeIn(docker_icon))
