@@ -8,12 +8,14 @@ from manim import (
     Rectangle,
     DoubleArrow,
     GrowFromCenter,
-    Scene,
+    RoundedRectangle,
     SVGMobject,
     ImageMobject,
     Group,
     Text,
     TypeWithCursor,
+    Create,
+    Scene,
 )
 from manim_slides.slide import Slide
 
@@ -80,7 +82,7 @@ class ThreeLayerAppScene(Slide):
             CURSOR.copy().scale(0.8).move_to(question_text[0])
         )  # Position the cursor
         self.add(question_text)
-        self.play(TypeWithCursor(text=question_text, cursor=cursor))
+        self.play(TypeWithCursor(text=question_text, cursor=cursor, time_per_char=0.05))
         self.next_slide()
 
 
@@ -133,3 +135,54 @@ class EvolutionOfDeploymentSlide(Slide):
 
         self.next_slide()
         self.play(FadeIn(docker_icon))
+
+
+class BareMetalDeployment(Scene):
+    def construct(self):
+        header_text = Text(text="Bare-Metal Deployment")
+        header_text.to_edge(edge=UP)
+        cursor = CURSOR.copy().scale(0.8).move_to(header_text[0])  # Position the cursor
+        self.add(header_text)
+        self.play(
+            TypeWithCursor(
+                text=header_text,
+                cursor=cursor,
+                leave_cursor_on=False,
+                time_per_char=0.05,
+            )
+        )
+
+        # self.next_slide()
+        server_border = RoundedRectangle(
+            width=13, height=6, stroke_width=1, corner_radius=0.1
+        )
+        server_border.next_to(header_text, DOWN, buff=0.5)
+
+        server_icon = SVGMobject(file_name="../assets/server-icon.svg").scale(0.7)
+        server_icon.move_to(server_border.get_corner(UP + RIGHT))
+
+        dependencies_header = Text(text="Dependencies").scale(0.5)
+        dependencies_border = RoundedRectangle(
+            width=5, height=5, stroke_width=0.7, corner_radius=0.1
+        )
+        dependencies_border.align_to(server_border, direction=UP + LEFT)
+        dependencies_border.shift(LEFT * -0.5, UP * -0.5)
+        dependencies_header.next_to(dependencies_border.get_top(), DOWN, buff=0.2)
+
+        application_header = Text(text="Application").scale(0.5)
+        application_border = RoundedRectangle(
+            width=5, height=5, stroke_width=0.7, corner_radius=0.1
+        )
+        application_border.align_to(server_border, direction=UP + RIGHT)
+        application_border.shift(RIGHT * -0.7, UP * -0.5)
+        application_header.next_to(application_border.get_top(), DOWN, buff=0.2)
+
+        self.play(Create(server_border), GrowFromCenter(server_icon))
+
+        self.wait()
+
+        self.play(Create(dependencies_border), FadeIn(dependencies_header))
+
+        self.wait()
+
+        self.play(Create(application_border), FadeIn(application_header))
