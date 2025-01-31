@@ -2,6 +2,9 @@ from manim import (
     DOWN,
     LEFT,
     RIGHT,
+    UP,
+    GREY_A,
+    Rectangle,
     DoubleArrow,
     GrowFromCenter,
     Scene,
@@ -9,10 +12,12 @@ from manim import (
     ImageMobject,
     Group,
     Text,
+    TypeWithCursor,
 )
+from manim_slides.slide import Slide
 
 
-class DefaultTemplate(Scene):
+class ThreeLayerAppScene(Slide):
     def construct(self):
         # Initial scene with 3-layer application explain
         three_layer_app_group = Group()
@@ -22,6 +27,7 @@ class DefaultTemplate(Scene):
         )
         self.play(GrowFromCenter(angular_icon))
         three_layer_app_group.add(angular_icon)
+        self.next_slide()
 
         first_arrow = DoubleArrow(tip_length=0.2, buff=0)
         self.add(first_arrow)
@@ -39,6 +45,7 @@ class DefaultTemplate(Scene):
             three_layer_app_group.animate.next_to(python_icon, LEFT),
         )
         three_layer_app_group.add(python_icon)
+        self.next_slide()
 
         second_arrow = DoubleArrow(tip_length=0.2, buff=0)
         self.add(second_arrow)
@@ -56,5 +63,21 @@ class DefaultTemplate(Scene):
         postgresql_icon.next_to(three_layer_app_group, RIGHT)
         self.play(GrowFromCenter(postgresql_icon))
         three_layer_app_group.add(postgresql_icon)
+        self.next_slide()
 
-        self.next_section(name="three_layer_app_intro")
+        question_text = Text(text="How do we deploy this?")
+        question_text.scale(0.8).next_to(three_layer_app_group, UP, buff=1)
+        cursor = (
+            Rectangle(
+                color=GREY_A,
+                fill_color=GREY_A,
+                fill_opacity=1.0,
+                height=1,
+                width=0.2,
+            )
+            .scale(0.8)
+            .move_to(question_text[0])
+        )  # Position the cursor
+        self.add(question_text)
+        self.play(TypeWithCursor(text=question_text, cursor=cursor))
+        self.next_slide()
