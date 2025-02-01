@@ -1,9 +1,11 @@
+from cloup import file_path
 from manim import (
     DOWN,
     LEFT,
     RIGHT,
     UP,
     GREY_A,
+    WHITE,
     FadeIn,
     Rectangle,
     DoubleArrow,
@@ -137,7 +139,7 @@ class EvolutionOfDeploymentSlide(Slide):
         self.play(FadeIn(docker_icon))
 
 
-class BareMetalDeployment(Scene):
+class BareMetalDeployment(Slide):
     def construct(self):
         header_text = Text(text="Bare-Metal Deployment")
         header_text.to_edge(edge=UP)
@@ -152,7 +154,7 @@ class BareMetalDeployment(Scene):
             )
         )
 
-        # self.next_slide()
+        self.next_slide()
         server_border = RoundedRectangle(
             width=13, height=6, stroke_width=1, corner_radius=0.1
         )
@@ -177,12 +179,37 @@ class BareMetalDeployment(Scene):
         application_border.shift(RIGHT * -0.7, UP * -0.5)
         application_header.next_to(application_border.get_top(), DOWN, buff=0.2)
 
+        python_icon = ImageMobject(filename_or_array="../assets/python-logo.png")
+        nginx_icon = SVGMobject(file_name="../assets/nginx-logo.svg")
+        iis_icon = SVGMobject(file_name="../assets/iis-logo.svg")
+
+        python_icon.scale(0.4).align_to(dependencies_border, direction=UP + LEFT)
+        python_icon.shift(DOWN * 1).shift(RIGHT * 0.5)
+
+        nginx_icon.scale(0.7).align_to(dependencies_border, direction=UP + RIGHT)
+        nginx_icon.shift(DOWN * 1.5).shift(LEFT * 0.5)
+
+        iis_icon.add_background_rectangle(color=WHITE, opacity=1, buff=0.5)
+        iis_icon.scale(0.5).align_to(dependencies_border, direction=DOWN + LEFT)
+        iis_icon.shift(UP * 0.2).shift(RIGHT * 0.5)
+
+        application_code = SVGMobject(file_name="../assets/code-icon.svg")
+        application_code.move_to(application_border.get_center())
+
         self.play(Create(server_border), GrowFromCenter(server_icon))
 
-        self.wait()
-
+        self.next_slide()
         self.play(Create(dependencies_border), FadeIn(dependencies_header))
 
-        self.wait()
+        self.next_slide()
+        self.play(
+            GrowFromCenter(python_icon),
+            GrowFromCenter(nginx_icon),
+            GrowFromCenter(iis_icon),
+        )
 
+        self.next_slide()
         self.play(Create(application_border), FadeIn(application_header))
+
+        self.next_slide()
+        self.play(GrowFromCenter(application_code))
