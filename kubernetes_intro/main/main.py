@@ -5,6 +5,9 @@ from manim import (
     UP,
     GREY_A,
     WHITE,
+    BLUE_D,
+    BLACK,
+    ORIGIN,
     Arrow,
     FadeIn,
     Rectangle,
@@ -18,6 +21,9 @@ from manim import (
     Text,
     TypeWithCursor,
     Create,
+    VGroup,
+    Write,
+    AnimationGroup,
 )
 from manim_slides.slide import Slide
 
@@ -469,3 +475,51 @@ class ContainersDeployment(Slide):
         self.next_slide()
         self.play(FadeIn(arrow_5), FadeIn(container_icon_2))
         self.play(FadeIn(arrow_6), FadeIn(container_icon_3))
+
+
+class VirtualMachineVsContainer(Slide):
+    def construct(self):
+        header_text = Text(text="Virtual Machines vs Containers")
+        header_text.to_edge(edge=UP)
+        cursor = CURSOR.copy().scale(0.8).move_to(header_text[0])  # Position the cursor
+        self.add(header_text)
+        self.play(
+            TypeWithCursor(
+                text=header_text,
+                cursor=cursor,
+                leave_cursor_on=False,
+                time_per_char=0.05,
+            )
+        )
+
+        self.next_slide()
+        container_stacking = ImageMobject(
+            filename_or_array="../assets/container_under_the_hood.webp"
+        )
+        container_stacking.add(
+            Text(text="Container").next_to(container_stacking, DOWN, buff=0.5)
+        )
+        container_stacking = container_stacking.scale(0.5)
+
+        vm_stacking = ImageMobject(filename_or_array="../assets/vm_under_the_hood.webp")
+        vm_stacking.add(
+            Text(text="Virtual Machine").next_to(vm_stacking, DOWN, buff=0.5)
+        )
+
+        vm_stacking = vm_stacking.scale(0.5).next_to(container_stacking, LEFT, buff=3)
+
+        group = Group()
+        group.add(vm_stacking, container_stacking)
+        group.center()
+
+        self.play(FadeIn(vm_stacking))
+
+        self.next_slide()
+        self.play(FadeIn(container_stacking))
+
+        source = Text(
+            text="Source: https://www.docker.com/resources/what-container/"
+        ).scale(0.5)
+        source.to_edge(DOWN, buff=0.2)
+        source.to_edge(RIGHT, buff=0.2)
+        self.play(FadeIn(source))
