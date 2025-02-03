@@ -5,6 +5,7 @@ from manim import (
     UP,
     GREY_A,
     WHITE,
+    Arrow,
     FadeIn,
     Rectangle,
     DoubleArrow,
@@ -319,7 +320,6 @@ class VirtualMachineDeployment(Slide):
         )
 
         self.next_slide()
-
         application_code_1 = SVGMobject(file_name="../assets/code-icon.svg").scale(0.7)
         application_code_1.align_to(virtual_machine_border_1, direction=DOWN + LEFT)
         application_code_1.shift(UP * 0.5, RIGHT * 2)
@@ -329,3 +329,143 @@ class VirtualMachineDeployment(Slide):
         application_code_2.shift(UP * 0.5, RIGHT * 2)
         self.play(FadeIn(application_code_1), FadeIn(application_code_2))
         self.next_slide()
+
+
+class ContainersDeployment(Slide):
+    def construct(self):
+        header_text = Text(text="Containers")
+        header_text.to_edge(edge=UP)
+        cursor = CURSOR.copy().scale(0.8).move_to(header_text[0])  # Position the cursor
+        self.add(header_text)
+        self.play(
+            TypeWithCursor(
+                text=header_text,
+                cursor=cursor,
+                leave_cursor_on=False,
+                time_per_char=0.05,
+            )
+        )
+
+        self.next_slide()
+        python_icon = ImageMobject(filename_or_array="../assets/python-logo.png")
+        nginx_icon = SVGMobject(file_name="../assets/nginx-logo.svg")
+        code_icon = SVGMobject(file_name="../assets/code-icon.svg")
+
+        python_icon = python_icon.scale(0.3)
+        nginx_icon = nginx_icon.scale(0.5)
+        code_icon = code_icon.scale(0.4)
+
+        nginx_icon.next_to(python_icon, DOWN, buff=0.5)
+        code_icon.next_to(nginx_icon, DOWN, buff=0.5)
+
+        dependencies_group = Group()
+        dependencies_group.add(python_icon, nginx_icon, code_icon)
+
+        dependencies_group.center()
+        dependencies_group.to_edge(LEFT, buff=0.5)
+
+        self.play(FadeIn(dependencies_group))
+
+        self.next_slide()
+        container_img_icon = SVGMobject("../assets/conatainer-img-icon.svg")
+        container_img_icon.add(
+            Text(text="Container Image")
+            .next_to(container_img_icon, DOWN, buff=0.2)
+            .scale(0.7)
+        )
+        container_img_icon = container_img_icon.scale(0.5)
+
+        arrow_1 = Arrow(
+            start=python_icon.get_edge_center(RIGHT),
+            end=container_img_icon.get_edge_center(LEFT),
+            buff=1.5,
+            stroke_width=4,
+            tip_length=0.2,
+        )
+
+        arrow_2 = Arrow(
+            start=nginx_icon.get_edge_center(RIGHT),
+            end=container_img_icon.get_edge_center(LEFT),
+            buff=1.5,
+            stroke_width=4,
+            tip_length=0.2,
+        )
+
+        arrow_3 = Arrow(
+            start=code_icon.get_edge_center(RIGHT),
+            end=container_img_icon.get_edge_center(LEFT),
+            buff=1.5,
+            stroke_width=4,
+            tip_length=0.2,
+        )
+
+        self.play(
+            FadeIn(arrow_1),
+            FadeIn(arrow_2),
+            FadeIn(arrow_3),
+            FadeIn(container_img_icon),
+        )
+
+        self.next_slide()
+        container_icon_1 = SVGMobject(file_name="../assets/container-icon.svg").scale(
+            0.5
+        )
+        container_icon_2 = SVGMobject(file_name="../assets/container-icon.svg").scale(
+            0.5
+        )
+        container_icon_3 = SVGMobject(file_name="../assets/container-icon.svg").scale(
+            0.5
+        )
+
+        container_icon_1.add(
+            Text(text="Container 1")
+            .scale(0.7)
+            .next_to(container_icon_1, DOWN, buff=0.2)
+        )
+        container_icon_2.add(
+            Text(text="Container 2")
+            .scale(0.7)
+            .next_to(container_icon_2, DOWN, buff=0.2)
+        )
+        container_icon_3.add(
+            Text(text="Container 3")
+            .scale(0.7)
+            .next_to(container_icon_3, DOWN, buff=0.2)
+        )
+
+        container_icon_2.next_to(container_icon_1, DOWN, buff=1)
+        container_icon_3.next_to(container_icon_2, DOWN, buff=1)
+
+        containers_icon_group = Group()
+        containers_icon_group.add(container_icon_1, container_icon_2, container_icon_3)
+        containers_icon_group.center()
+        containers_icon_group.to_edge(RIGHT, buff=0.5)
+
+        arrow_4 = Arrow(
+            start=container_img_icon.get_edge_center(RIGHT),
+            end=container_icon_1.get_edge_center(LEFT),
+            buff=1.0,
+            stroke_width=4,
+            tip_length=0.2,
+        )
+
+        arrow_5 = Arrow(
+            start=container_img_icon.get_edge_center(RIGHT),
+            end=container_icon_2.get_edge_center(LEFT),
+            buff=1.0,
+            stroke_width=4,
+            tip_length=0.2,
+        )
+
+        arrow_6 = Arrow(
+            start=container_img_icon.get_edge_center(RIGHT),
+            end=container_icon_3.get_edge_center(LEFT),
+            buff=1.0,
+            stroke_width=4,
+            tip_length=0.2,
+        )
+
+        self.play(FadeIn(arrow_4), FadeIn(container_icon_1))
+        self.next_slide()
+        self.play(FadeIn(arrow_5), FadeIn(container_icon_2))
+        self.play(FadeIn(arrow_6), FadeIn(container_icon_3))
