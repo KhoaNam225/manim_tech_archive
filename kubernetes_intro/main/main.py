@@ -1,6 +1,7 @@
 from manim import (
     DOWN,
     LEFT,
+    RED,
     RIGHT,
     UP,
     GREY_A,
@@ -10,6 +11,8 @@ from manim import (
     ORIGIN,
     Arrow,
     FadeIn,
+    FadeOut,
+    GrowArrow,
     Rectangle,
     DoubleArrow,
     GrowFromCenter,
@@ -523,3 +526,93 @@ class VirtualMachineVsContainer(Slide):
         source.to_edge(DOWN, buff=0.2)
         source.to_edge(RIGHT, buff=0.2)
         self.play(FadeIn(source))
+
+
+class ProblemWithContainer(Slide):
+    def construct(self):
+        header_text = Text(text="Issues with containers").scale(0.7)
+        header_text.to_edge(edge=UP)
+        header_text.to_edge(edge=LEFT, buff=0.5)
+        cursor = CURSOR.copy().scale(0.6).move_to(header_text[0])  # Position the cursor
+        self.add(header_text)
+        self.play(
+            TypeWithCursor(
+                text=header_text,
+                cursor=cursor,
+                leave_cursor_on=False,
+                time_per_char=0.05,
+            )
+        )
+
+        self.next_slide()
+        users_icon = SVGMobject(file_name="../assets/users-icon.svg")
+        users_icon.add(
+            Text(text="Users").scale(0.8).next_to(users_icon, DOWN, buff=0.2)
+        )
+        users_icon.center()
+        users_icon.to_edge(LEFT, buff=0.2)
+        users_icon.scale(0.4)
+
+        self.play(FadeIn(users_icon))
+
+        self.next_slide()
+        server_border_1 = RoundedRectangle(
+            width=10, height=6, stroke_width=1, corner_radius=0.1
+        )
+        server_border_1.to_edge(RIGHT)
+        server_icon = SVGMobject("../assets/server-icon.svg")
+        server_icon.scale(0.5).move_to(server_border_1.get_corner(UP + RIGHT))
+        self.play(Create(server_border_1), FadeIn(server_icon))
+
+        container_1 = SVGMobject(file_name="../assets/container-icon.svg").scale(0.5)
+        container_1.move_to(server_border_1.get_center())
+        self.play(FadeIn(container_1))
+
+        self.next_slide()
+        arrow_1 = Arrow(
+            start=users_icon.get_edge_center(RIGHT),
+            end=container_1.get_edge_center(LEFT),
+            buff=1.0,
+            stroke_width=4,
+            tip_length=0.2,
+        )
+
+        self.play(GrowArrow(arrow_1))
+        self.next_slide()
+
+        container_2 = container_1.copy()
+        container_2.next_to(container_1, DOWN, buff=0.5)
+        container_group_1 = Group(container_1, container_2)
+        self.play(FadeIn(container_2))
+        self.play(container_group_1.animate.move_to(server_border_1.get_center()))
+        self.next_slide()
+
+        question_mark_text = Text(text="?", color=RED)
+        question_mark_text.move_to(arrow_1.get_tip())
+        question_mark_text.shift(UP * 0.5)
+        self.play(FadeIn(question_mark_text))
+
+        self.next_slide()
+
+        self.play(FadeOut(question_mark_text), FadeOut(arrow_1))
+
+        self.play(
+            server_border_1.animate.stretch_to_fit_width(7, about_edge=RIGHT),
+            server_border_1.animate.stretch_to_fit_height(3, about_edge=UP),
+        )
+
+        self.play(container_group_1.animate.move_to(server_border_1.get_center()))
+
+        server_border_2 = server_border_1.copy()
+        server_border_2.next_to(server_border_1, DOWN, buff=0.5)
+        server_icon_2 = server_icon.copy()
+        server_icon_2.move_to(server_border_2.get_corner(UP + RIGHT))
+        self.play(Create(server_border_2), FadeIn(server_icon_2))
+
+        container_group_2 = container_group_1.copy()
+        container_group_2.move_to(server_border_2.get_center())
+        self.play(FadeIn(container_group_2))
+
+        self.next_slide()
+        question_mark_text.next_to(users_icon, RIGHT, buff=0.5)
+        self.play(FadeIn(question_mark_text))
