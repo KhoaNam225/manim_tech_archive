@@ -6,12 +6,10 @@ from manim import (
     UP,
     GREY_A,
     WHITE,
-    BLUE_D,
-    BLACK,
-    ORIGIN,
     Arrow,
     FadeIn,
     FadeOut,
+    Circumscribe,
     GrowArrow,
     Rectangle,
     DoubleArrow,
@@ -24,9 +22,7 @@ from manim import (
     Text,
     TypeWithCursor,
     Create,
-    VGroup,
-    Write,
-    AnimationGroup,
+    Cross,
 )
 from manim_slides.slide import Slide
 
@@ -616,3 +612,139 @@ class ProblemWithContainer(Slide):
         self.next_slide()
         question_mark_text.next_to(users_icon, RIGHT, buff=0.5)
         self.play(FadeIn(question_mark_text))
+
+
+class KubernetesLogo(Slide):
+    def construct(self):
+        k8s_logo = SVGMobject(file_name="../assets/k8s_logo.svg")
+        k8s_logo.add(
+            Text(text="Kubernetes").scale(1.5).next_to(k8s_logo, RIGHT, buff=0.2)
+        )
+        k8s_logo.center()
+        self.play(FadeIn(k8s_logo))
+
+
+class KubernetesOverview(Slide):
+    def construct(self):
+        header_text = Text(text="How to solve this problem?").scale(0.7)
+        header_text.to_edge(edge=UP)
+        header_text.to_edge(edge=LEFT, buff=0.5)
+        self.add(header_text)
+        self.play(FadeIn(header_text))
+        self.next_slide()
+
+        users_icon = SVGMobject(file_name="../assets/users-icon.svg")
+        users_icon.add(
+            Text(text="Users").scale(0.8).next_to(users_icon, DOWN, buff=0.2)
+        )
+        users_icon.center()
+        users_icon.to_edge(LEFT, buff=0.2)
+        users_icon.scale(0.4)
+
+        self.add(users_icon)
+        self.play(FadeIn(users_icon))
+        self.next_slide()
+
+        server_border_1 = RoundedRectangle(
+            width=7, height=3, stroke_width=1, corner_radius=0.1
+        )
+        server_border_1.to_edge(RIGHT)
+        server_border_1.shift(UP * 1.5)
+        server_icon = SVGMobject("../assets/server-icon.svg")
+        server_icon.scale(0.5).move_to(server_border_1.get_corner(UP + RIGHT))
+        self.add(server_border_1, server_icon)
+
+        container_1 = SVGMobject(file_name="../assets/container-icon.svg").scale(0.5)
+        container_1.move_to(server_border_1.get_center())
+        container_2 = container_1.copy()
+        container_2.next_to(container_1, DOWN, buff=0.5)
+        container_group_1 = Group(container_1, container_2)
+
+        container_group_1.move_to(server_border_1.get_center())
+        self.add(container_group_1)
+
+        server_border_2 = server_border_1.copy()
+        server_border_2.next_to(server_border_1, DOWN, buff=0.5)
+        server_icon_2 = server_icon.copy()
+        server_icon_2.move_to(server_border_2.get_corner(UP + RIGHT))
+        self.add(server_border_2, server_icon_2)
+
+        container_group_2 = container_group_1.copy()
+        container_group_2.move_to(server_border_2.get_center())
+        self.add(container_group_2)
+
+        self.play(
+            Create(server_border_1),
+            GrowFromCenter(server_icon),
+            FadeIn(container_group_1),
+            Create(server_border_2),
+            GrowFromCenter(server_icon_2),
+            FadeIn(container_group_2),
+        )
+        self.next_slide()
+
+        server_border_3 = RoundedRectangle(
+            width=2, height=2, stroke_width=1, corner_radius=0.1
+        )
+
+        server_border_3.next_to(users_icon, RIGHT, buff=2)
+        server_icon_3 = server_icon.copy()
+        server_icon_3.move_to(server_border_3.get_corner(UP + RIGHT))
+        self.add(server_border_3)
+        self.add(server_icon_3)
+
+        self.play(Create(server_border_3), GrowFromCenter(server_icon_3))
+        self.next_slide()
+
+        arrow_user_server_3 = Arrow(
+            start=users_icon.get_edge_center(RIGHT),
+            end=server_border_3.get_edge_center(LEFT),
+            stroke_width=4,
+            tip_length=0.2,
+        )
+        self.add(arrow_user_server_3)
+        self.play(GrowArrow(arrow_user_server_3))
+
+        arrow_server_3_server_1 = Arrow(
+            start=server_border_3.get_edge_center(RIGHT),
+            end=server_border_1.get_center(),
+            stroke_width=4,
+            tip_length=0.2,
+            buff=1,
+        )
+        self.add(arrow_server_3_server_1)
+        self.play(GrowArrow(arrow_server_3_server_1))
+
+        arrow_server_3_server_2 = Arrow(
+            start=server_border_3.get_edge_center(RIGHT),
+            end=server_border_2.get_center(),
+            stroke_width=4,
+            tip_length=0.2,
+            buff=1,
+        )
+        self.add(arrow_server_3_server_2)
+        self.play(GrowArrow(arrow_server_3_server_2))
+        self.next_slide()
+
+        cross = Cross().scale_to_fit_width(container_1.width)
+        cross.move_to(container_1.get_center()).shift(DOWN * 0.2)
+        self.add(cross)
+        self.play(FadeIn(cross))
+        self.next_slide()
+
+        container_3 = container_1.copy()
+        container_3.move_to(server_border_2.get_center())
+        container_3.shift(RIGHT * 2)
+        self.add(container_3)
+        self.play(FadeIn(container_3))
+        self.play(Circumscribe(container_3))
+        self.next_slide()
+
+        kubernetes_logo = (
+            SVGMobject(file_name="../assets/k8s_logo.svg")
+            .scale_to_fit_width(server_border_3.width)
+            .scale(0.5)
+        )
+        kubernetes_logo.move_to(server_border_3.get_center())
+        self.add(kubernetes_logo)
+        self.play(FadeIn(kubernetes_logo))
