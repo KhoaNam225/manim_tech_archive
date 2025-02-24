@@ -3,6 +3,7 @@ from manim import (
     LEFT,
     RED,
     RIGHT,
+    UL,
     UP,
     GREY_A,
     WHITE,
@@ -748,3 +749,117 @@ class KubernetesOverview(Slide):
         kubernetes_logo.move_to(server_border_3.get_center())
         self.add(kubernetes_logo)
         self.play(FadeIn(kubernetes_logo))
+
+
+class KubernetesHowItWorks(Scene):
+    def construct(self):
+        header_text = Text(text="How Kubernetes Works?").scale(0.7)
+        header_text.to_edge(edge=UP)
+        self.add(header_text)
+        self.play(FadeIn(header_text))
+
+        server_border_1 = RoundedRectangle(
+            width=7, height=3, stroke_width=1, corner_radius=0.1
+        )
+        server_border_1.to_edge(RIGHT)
+        server_border_1.shift(UP * 1.5)
+        server_icon = SVGMobject("../assets/server-icon.svg")
+        server_icon.scale(0.5).move_to(server_border_1.get_corner(UP + RIGHT))
+        self.add(server_border_1, server_icon)
+
+        server_border_2 = server_border_1.copy()
+        server_border_2.next_to(server_border_1, DOWN, buff=0.5)
+        server_icon_2 = server_icon.copy()
+        server_icon_2.move_to(server_border_2.get_corner(UP + RIGHT))
+        self.add(server_border_2, server_icon_2)
+        self.play(
+            Create(server_border_1),
+            GrowFromCenter(server_icon),
+            Create(server_border_2),
+            GrowFromCenter(server_icon_2),
+        )
+
+        server_border_3 = RoundedRectangle(
+            width=3, height=3, stroke_width=1, corner_radius=0.1
+        )
+
+        server_border_3.to_edge(LEFT, buff=1)
+        server_icon_3 = server_icon.copy()
+        server_icon_3.move_to(server_border_3.get_corner(UP + RIGHT))
+        self.add(server_border_3)
+        self.add(server_icon_3)
+
+        self.play(Create(server_border_3), GrowFromCenter(server_icon_3))
+
+        control_plane_text = Text(text="Control Plane (Master)").scale(0.5)
+        control_plane_text.next_to(
+            server_border_3.get_edge_center(DOWN), DOWN, buff=0.2
+        )
+        self.add(control_plane_text)
+        self.play(FadeIn(control_plane_text))
+
+        worker_text_1 = Text(text="Worker 1").scale(0.5)
+        worker_text_1.next_to(server_border_1.get_edge_center(UP), DOWN, buff=0.2)
+
+        worker_text_2 = Text(text="Worker 2").scale(0.5)
+        worker_text_2.next_to(server_border_2.get_edge_center(UP), DOWN, buff=0.2)
+
+        self.add(worker_text_1, worker_text_2)
+        self.play(FadeIn(worker_text_1), FadeIn(worker_text_2))
+
+        k8s_scheduler = ImageMobject(filename_or_array="../assets/k8s_scheduler.png")
+        k8s_api = ImageMobject(filename_or_array="../assets/k8s_api.png")
+        k8s_proxy = ImageMobject(filename_or_array="../assets/k8s_proxy.png")
+        k8s_kubelet = ImageMobject(filename_or_array="../assets/k8s_kubelet.png")
+
+        k8s_scheduler.next_to(server_border_3.get_edge_center(UP), DOWN, buff=0.3)
+        k8s_api.next_to(k8s_scheduler, DOWN, buff=0.5)
+
+        self.add(k8s_scheduler, k8s_api)
+        self.play(FadeIn(k8s_scheduler), FadeIn(k8s_api))
+
+        server_1_proxy_icon = k8s_proxy.copy().move_to(
+            server_border_1.get_corner(UL) + DOWN * 0.7 + RIGHT * 1
+        )
+        server_1_kubelet_icon = k8s_kubelet.copy().next_to(
+            server_1_proxy_icon, DOWN, buff=0.5
+        )
+        self.add(server_1_proxy_icon, server_1_kubelet_icon)
+        self.play(FadeIn(server_1_proxy_icon), FadeIn(server_1_kubelet_icon))
+
+        server_2_proxy_icon = k8s_proxy.copy().move_to(
+            server_border_2.get_corner(UL) + DOWN * 0.7 + RIGHT * 1
+        )
+        server_2_kubelet_icon = k8s_kubelet.copy().next_to(
+            server_2_proxy_icon, DOWN, buff=0.5
+        )
+        self.add(server_2_proxy_icon, server_2_kubelet_icon)
+        self.play(FadeIn(server_2_proxy_icon), FadeIn(server_2_kubelet_icon))
+
+        arrow_server_3_server_1 = Arrow(
+            start=server_border_3.get_edge_center(RIGHT),
+            end=server_border_1.get_edge_center(LEFT),
+            stroke_width=4,
+            tip_length=0.2,
+            buff=0.5,
+        )
+        arrow_server_3_server_2 = Arrow(
+            start=server_border_3.get_edge_center(RIGHT),
+            end=server_border_2.get_edge_center(LEFT),
+            stroke_width=4,
+            tip_length=0.2,
+            buff=0.5,
+        )
+        self.add(arrow_server_3_server_1, arrow_server_3_server_2)
+        self.play(
+            GrowArrow(arrow_server_3_server_1), GrowArrow(arrow_server_3_server_2)
+        )
+
+        python_icon_1 = ImageMobject(filename_or_array="../assets/python-logo.png")
+        python_icon_1.scale(0.3).next_to(worker_text_1, DOWN, buff=0.5)
+        python_icon_2 = ImageMobject(filename_or_array="../assets/python-logo.png")
+        python_icon_2.scale(0.3).next_to(worker_text_2, DOWN, buff=0.5)
+        angular_icon_1 = SVGMobject(file_name="../assets/angular-logo.svg")
+        angular_icon_1.scale(0.5).next_to(python_icon_2, RIGHT, buff=0.7)
+        self.add(python_icon_1, python_icon_2, angular_icon_1)
+        self.play(FadeIn(python_icon_1), FadeIn(python_icon_2), FadeIn(angular_icon_1))
