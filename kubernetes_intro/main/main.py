@@ -1,29 +1,35 @@
 from manim import (
+    PI,
     DOWN,
+    GREY_A,
     LEFT,
     RED,
+    BLUE,
     RIGHT,
     UL,
     UP,
-    GREY_A,
     WHITE,
     Arrow,
-    FadeIn,
-    FadeOut,
+    CurvedArrow,
+    SurroundingRectangle,
+    Circle,
     Circumscribe,
-    GrowArrow,
-    Rectangle,
-    DoubleArrow,
-    GrowFromCenter,
-    RoundedRectangle,
-    SVGMobject,
-    ImageMobject,
-    Group,
-    Scene,
-    Text,
-    TypeWithCursor,
     Create,
     Cross,
+    DoubleArrow,
+    FadeIn,
+    FadeOut,
+    Group,
+    GrowArrow,
+    GrowFromCenter,
+    ImageMobject,
+    Rectangle,
+    RoundedRectangle,
+    Scene,
+    ShowPassingFlash,
+    SVGMobject,
+    Text,
+    TypeWithCursor,
 )
 from manim_slides.slide import Slide
 
@@ -751,13 +757,14 @@ class KubernetesOverview(Slide):
         self.play(FadeIn(kubernetes_logo))
 
 
-class KubernetesHowItWorks(Scene):
+class KubernetesHowItWorks(Slide):
     def construct(self):
         header_text = Text(text="How Kubernetes Works?").scale(0.7)
         header_text.to_edge(edge=UP)
         self.add(header_text)
         self.play(FadeIn(header_text))
 
+        self.next_slide()
         server_border_1 = RoundedRectangle(
             width=7, height=3, stroke_width=1, corner_radius=0.1
         )
@@ -791,12 +798,14 @@ class KubernetesHowItWorks(Scene):
 
         self.play(Create(server_border_3), GrowFromCenter(server_icon_3))
 
+        self.next_slide()
         control_plane_text = Text(text="Control Plane (Master)").scale(0.5)
         control_plane_text.next_to(
             server_border_3.get_edge_center(DOWN), DOWN, buff=0.2
         )
         self.add(control_plane_text)
         self.play(FadeIn(control_plane_text))
+        self.next_slide()
 
         worker_text_1 = Text(text="Worker 1").scale(0.5)
         worker_text_1.next_to(server_border_1.get_edge_center(UP), DOWN, buff=0.2)
@@ -806,6 +815,7 @@ class KubernetesHowItWorks(Scene):
 
         self.add(worker_text_1, worker_text_2)
         self.play(FadeIn(worker_text_1), FadeIn(worker_text_2))
+        self.next_slide()
 
         k8s_scheduler = ImageMobject(filename_or_array="../assets/k8s_scheduler.png")
         k8s_api = ImageMobject(filename_or_array="../assets/k8s_api.png")
@@ -817,6 +827,7 @@ class KubernetesHowItWorks(Scene):
 
         self.add(k8s_scheduler, k8s_api)
         self.play(FadeIn(k8s_scheduler), FadeIn(k8s_api))
+        self.next_slide()
 
         server_1_proxy_icon = k8s_proxy.copy().move_to(
             server_border_1.get_corner(UL) + DOWN * 0.7 + RIGHT * 1
@@ -835,6 +846,7 @@ class KubernetesHowItWorks(Scene):
         )
         self.add(server_2_proxy_icon, server_2_kubelet_icon)
         self.play(FadeIn(server_2_proxy_icon), FadeIn(server_2_kubelet_icon))
+        self.next_slide()
 
         arrow_server_3_server_1 = Arrow(
             start=server_border_3.get_edge_center(RIGHT),
@@ -854,6 +866,7 @@ class KubernetesHowItWorks(Scene):
         self.play(
             GrowArrow(arrow_server_3_server_1), GrowArrow(arrow_server_3_server_2)
         )
+        self.next_slide()
 
         python_icon_1 = ImageMobject(filename_or_array="../assets/python-logo.png")
         python_icon_1.scale(0.3).next_to(worker_text_1, DOWN, buff=0.5)
@@ -863,3 +876,301 @@ class KubernetesHowItWorks(Scene):
         angular_icon_1.scale(0.5).next_to(python_icon_2, RIGHT, buff=0.7)
         self.add(python_icon_1, python_icon_2, angular_icon_1)
         self.play(FadeIn(python_icon_1), FadeIn(python_icon_2), FadeIn(angular_icon_1))
+        self.next_slide()
+
+
+class KubernetesComponent(Slide):
+    def construct(self):
+        header_text = Text(text="K8s - The basic concepts").scale(0.7)
+        header_text.to_edge(edge=UP + LEFT)
+        self.add(header_text)
+        self.play(FadeIn(header_text))
+        self.next_slide()
+
+        server_border_1 = RoundedRectangle(
+            width=7, height=3, stroke_width=1, corner_radius=0.1
+        )
+        server_border_1.to_edge(RIGHT)
+        server_border_1.shift(UP * 1.5)
+        server_icon = SVGMobject("../assets/server-icon.svg")
+        server_icon.scale(0.5).move_to(server_border_1.get_corner(UP + RIGHT))
+        self.add(server_border_1, server_icon)
+
+        server_border_2 = server_border_1.copy()
+        server_border_2.next_to(server_border_1, DOWN, buff=0.5)
+        server_icon_2 = server_icon.copy()
+        server_icon_2.move_to(server_border_2.get_corner(UP + RIGHT))
+        self.add(server_border_2, server_icon_2)
+
+        server_border_3 = RoundedRectangle(
+            width=3, height=3, stroke_width=1, corner_radius=0.1
+        )
+
+        server_border_3.to_edge(LEFT, buff=1)
+        server_icon_3 = server_icon.copy()
+        server_icon_3.move_to(server_border_3.get_corner(UP + RIGHT))
+        self.add(server_border_3)
+        self.add(server_icon_3)
+
+        control_plane_text = Text(text="Control Plane (Master)").scale(0.5)
+        control_plane_text.next_to(
+            server_border_3.get_edge_center(DOWN), DOWN, buff=0.2
+        )
+        self.add(control_plane_text)
+
+        worker_text_1 = Text(text="Worker 1").scale(0.5)
+        worker_text_1.next_to(server_border_1.get_edge_center(UP), DOWN, buff=0.2)
+
+        worker_text_2 = Text(text="Worker 2").scale(0.5)
+        worker_text_2.next_to(server_border_2.get_edge_center(UP), DOWN, buff=0.2)
+
+        self.add(worker_text_1, worker_text_2)
+
+        k8s_scheduler = ImageMobject(filename_or_array="../assets/k8s_scheduler.png")
+        k8s_api = ImageMobject(filename_or_array="../assets/k8s_api.png")
+        k8s_proxy = ImageMobject(filename_or_array="../assets/k8s_proxy.png")
+        k8s_kubelet = ImageMobject(filename_or_array="../assets/k8s_kubelet.png")
+
+        k8s_scheduler.next_to(server_border_3.get_edge_center(UP), DOWN, buff=0.3)
+        k8s_api.next_to(k8s_scheduler, DOWN, buff=0.5)
+
+        self.add(k8s_scheduler, k8s_api)
+
+        server_1_proxy_icon = k8s_proxy.copy().move_to(
+            server_border_1.get_corner(UL) + DOWN * 0.7 + RIGHT * 1
+        )
+        server_1_kubelet_icon = k8s_kubelet.copy().next_to(
+            server_1_proxy_icon, DOWN, buff=0.5
+        )
+        self.add(server_1_proxy_icon, server_1_kubelet_icon)
+
+        server_2_proxy_icon = k8s_proxy.copy().move_to(
+            server_border_2.get_corner(UL) + DOWN * 0.7 + RIGHT * 1
+        )
+        server_2_kubelet_icon = k8s_kubelet.copy().next_to(
+            server_2_proxy_icon, DOWN, buff=0.5
+        )
+        self.add(server_2_proxy_icon, server_2_kubelet_icon)
+
+        arrow_server_3_server_1 = Arrow(
+            start=server_border_3.get_edge_center(RIGHT),
+            end=server_border_1.get_edge_center(LEFT),
+            stroke_width=4,
+            tip_length=0.2,
+            buff=0.5,
+        )
+        arrow_server_3_server_2 = Arrow(
+            start=server_border_3.get_edge_center(RIGHT),
+            end=server_border_2.get_edge_center(LEFT),
+            stroke_width=4,
+            tip_length=0.2,
+            buff=0.5,
+        )
+        self.add(arrow_server_3_server_1, arrow_server_3_server_2)
+
+        python_icon_1 = ImageMobject(filename_or_array="../assets/python-logo.png")
+        python_icon_1.scale(0.3).next_to(worker_text_1, DOWN, buff=0.5)
+        python_icon_2 = ImageMobject(filename_or_array="../assets/python-logo.png")
+        python_icon_2.scale(0.3).next_to(worker_text_2, DOWN, buff=0.5)
+        angular_icon_1 = SVGMobject(file_name="../assets/angular-logo.svg")
+        angular_icon_1.scale(0.5).next_to(python_icon_2, RIGHT, buff=0.7)
+        self.add(python_icon_1, python_icon_2, angular_icon_1)
+        self.next_slide()
+
+        self.play(
+            header_text.animate.become(
+                Text(text="K8s - The Nodes").scale(0.7).to_edge(UP + LEFT)
+            )
+        )
+        self.next_slide(loop=True)
+
+        self.play(
+            ShowPassingFlash(
+                server_border_1.copy().set_stroke(width=5, color=RED),
+                run_time=2,
+                time_width=2.5,
+            ),
+            ShowPassingFlash(
+                server_border_2.copy().set_stroke(width=5, color=RED),
+                run_time=2,
+                time_width=2.5,
+            ),
+            ShowPassingFlash(
+                server_border_3.copy().set_stroke(width=5, color=RED),
+                run_time=2,
+                time_width=2.5,
+            ),
+        )
+
+        self.next_slide()
+        self.play(
+            header_text.animate.become(
+                Text(text="K8s - The Pods").scale(0.7).to_edge(UP + LEFT)
+            )
+        )
+
+        self.next_slide(loop=True)
+        self.play(
+            Circumscribe(
+                python_icon_1,
+                time_width=2.5,
+                color=RED,
+                shape=Circle,
+                buff=0.1,
+                run_time=2,
+            ),
+            Circumscribe(
+                python_icon_2,
+                time_width=2.5,
+                color=RED,
+                shape=Circle,
+                buff=0.1,
+                run_time=2,
+            ),
+            Circumscribe(
+                angular_icon_1,
+                time_width=2.5,
+                color=RED,
+                shape=Circle,
+                buff=0.1,
+                run_time=2,
+            ),
+            Circumscribe(
+                server_1_proxy_icon,
+                time_width=2.5,
+                color=RED,
+                shape=Circle,
+                buff=0.1,
+                run_time=2,
+            ),
+            Circumscribe(
+                server_2_proxy_icon,
+                time_width=2.5,
+                color=RED,
+                shape=Circle,
+                buff=0.1,
+                run_time=2,
+            ),
+            Circumscribe(
+                server_1_kubelet_icon,
+                time_width=2.5,
+                color=RED,
+                shape=Circle,
+                buff=0.1,
+                run_time=2,
+            ),
+            Circumscribe(
+                server_2_kubelet_icon,
+                time_width=2.5,
+                color=RED,
+                shape=Circle,
+                buff=0.1,
+                run_time=2,
+            ),
+            Circumscribe(
+                k8s_api, time_width=2.5, color=RED, shape=Circle, buff=0.1, run_time=2
+            ),
+            Circumscribe(
+                k8s_scheduler,
+                time_width=2.5,
+                color=RED,
+                shape=Circle,
+                buff=0.1,
+                run_time=2,
+            ),
+        )
+
+        self.next_slide()
+        self.play(
+            header_text.animate.become(
+                Text(text="K8s - The Namespaces").scale(0.7).to_edge(UP + LEFT)
+            )
+        )
+
+        kube_system_server_1 = Group(server_1_proxy_icon, server_1_kubelet_icon)
+        kube_system_server_2 = Group(server_2_proxy_icon, server_2_kubelet_icon)
+        kube_system_server_3 = Group(k8s_scheduler, k8s_api)
+        user_namespace = Group(python_icon_1, python_icon_2, angular_icon_1)
+
+        bounding_box_kube_system_1 = SurroundingRectangle(
+            kube_system_server_1, buff=0.1, color=BLUE, corner_radius=0.1
+        )
+        bounding_box_kube_system_2 = SurroundingRectangle(
+            kube_system_server_2, buff=0.1, color=BLUE, corner_radius=0.1
+        )
+        bounding_box_kube_system_3 = SurroundingRectangle(
+            kube_system_server_3, buff=0.1, color=BLUE, corner_radius=0.1
+        )
+        bounding_box_user_namespace = SurroundingRectangle(
+            user_namespace, buff=0.1, color=RED, corner_radius=0.1
+        )
+        self.play(
+            Create(bounding_box_kube_system_1),
+            Create(bounding_box_kube_system_2),
+            Create(bounding_box_kube_system_3),
+            Create(bounding_box_user_namespace),
+        )
+
+        self.next_slide()
+        self.play(
+            header_text.animate.become(
+                Text(text="K8s - The Deployment").scale(0.7).to_edge(UP + LEFT)
+            )
+        )
+
+        self.play(
+            FadeOut(bounding_box_kube_system_1),
+            FadeOut(bounding_box_kube_system_2),
+            FadeOut(bounding_box_kube_system_3),
+            FadeOut(bounding_box_user_namespace),
+        )
+
+        self.next_slide()
+        bounding_box_backend_deployment = SurroundingRectangle(
+            Group(python_icon_1, python_icon_2), buff=0.1, color=BLUE, corner_radius=0.1
+        )
+        bounding_box_front_end_deployment = SurroundingRectangle(
+            Group(angular_icon_1), buff=0.1, color=RED, corner_radius=0.1
+        )
+        self.play(
+            Create(bounding_box_backend_deployment),
+            Create(bounding_box_front_end_deployment),
+        )
+
+        self.next_slide()
+        self.play(
+            header_text.animate.become(
+                Text(text="K8s - The Services & The Ingress")
+                .scale(0.7)
+                .to_edge(UP + LEFT)
+            )
+        )
+
+        k8s_ingress = ImageMobject(filename_or_array="../assets/k8s_ingress.png")
+        k8s_ingress.add(
+            Text(text="Ingress").scale(0.5).next_to(k8s_ingress, DOWN, buff=0.2)
+        )
+        k8s_ingress.next_to(control_plane_text, DOWN, buff=0.2)
+        self.add(k8s_ingress)
+        self.play(FadeIn(k8s_ingress))
+
+        ingress_to_backend_arrow = CurvedArrow(
+            k8s_ingress.get_corner(UP + RIGHT),
+            bounding_box_backend_deployment.get_corner(UP + LEFT),
+            angle=-PI / 2,
+            tip_length=0.2,
+        ).set_stroke(width=3, color=BLUE)
+        ingress_to_frontend_arrow = CurvedArrow(
+            k8s_ingress.get_corner(DOWN + RIGHT),
+            bounding_box_front_end_deployment.get_corner(DOWN + LEFT),
+            angle=PI / 5,
+            tip_length=0.2,
+        ).set_stroke(width=3, color=RED)
+        self.add(ingress_to_frontend_arrow)
+        self.add(ingress_to_backend_arrow)
+        self.next_slide(loop=True)
+        self.play(
+            Create(ingress_to_frontend_arrow, run_time=2),
+            Create(ingress_to_backend_arrow, run_time=2),
+        )
+        self.next_slide()
